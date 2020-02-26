@@ -1,0 +1,5 @@
+sample_data
+__pycache__
+
+# OS-generated files
+.DS_Store
