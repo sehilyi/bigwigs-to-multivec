@@ -2,7 +2,7 @@ sample_data
 __pycache__
 
 # IDE
-.vscode
+.vscode/
 
 # OS-generated files
 .DS_Store
