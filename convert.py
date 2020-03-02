@@ -12,6 +12,7 @@ import multivec as cmv
 import utils
 
 IS_DEBUG = False
+
 test_input_files_1 = ["sample_data/2_treat.bw"]
 test_input_files_2 = ["sample_data/1_treat.bw", "sample_data/2_treat.bw"]
 test_input_files_3 = [
@@ -19,7 +20,7 @@ test_input_files_3 = [
     "sample_data/2_treat.bw", 
     "sample_data/1_treat.bw"
 ]
-test_input_files_58 = ["sample_output/" + str(i + 1) + "_cistrome_db.bw" for i in range(2)]
+test_input_files_58 = ["sample_output/" + str(i + 1) + "_cistrome_db.bw" for i in range(5)]
 
 def bigwig_to_multivec(
     input_files,
@@ -34,17 +35,17 @@ def bigwig_to_multivec(
     starting_resolution: int (default 1)
         The starting resolution of the input data
     """
-
-    # TODO: May need to use batch to be able to deal with large data in unstable h5py package.
+    
+    utils.set_time()
 
     ## Handling Errors.
     # None input file.
     if len(input_files) is 0:
-        print("No enough input files suggested.")
+        print("No input file suggested.")
         return
     print(len(input_files), "files prepared.")
-
-    # None bigwig files.
+    
+    # Not a bigwig file.
     for in_file in input_files:
         bw = pyBigWig.open(in_file)
         if not bw.isBigWig(): 
@@ -55,7 +56,7 @@ def bigwig_to_multivec(
 
     # Define const variables.
     EMPTY_VALUE = np.nan
-
+    
     ## Convert
     # Store data in a cache file.
     with tempfile.TemporaryDirectory() as td:
@@ -79,7 +80,7 @@ def bigwig_to_multivec(
                     elif k in chromsizes and chromsizes[k] < v:
                         chromsizes[k] = v
             bw.close()
-        
+
         # Convert dict to a list of tuples to input to multivec function.
         chromsizes = sorted([(k, v) for k, v in chromsizes.items()], key=utils.sort_by_chrom)
         
@@ -89,7 +90,7 @@ def bigwig_to_multivec(
             chromsizes=[("chr9", 138394717)]
             
         # Init a variable & create cache files with name and size
-        raw_data = { chrom: np.full((len(input_files),size), EMPTY_VALUE) for (chrom, size) in chromsizes }
+        raw_data = { chrom: np.zeros((len(input_files),size)) for (chrom, size) in chromsizes }
         for (chrom, size) in chromsizes:
             f_out.create_dataset(
                 chrom,
@@ -98,52 +99,38 @@ def bigwig_to_multivec(
                     len(input_files),
                 ),
                 fillvalue=EMPTY_VALUE,
-                compression="gzip",
+                compression="gzip"
             )
         
-        print("Data initialized.")
+        print("Data initialized.", utils.get_time_duration())
 
         for file_index, cur_in_file in enumerate(input_files):
             bw = pyBigWig.open(cur_in_file)
 
             for (chrom, size) in chromsizes:
                 
-                # cur_position = 0
-                
                 for interval in bw.intervals(chrom):
                     (interval_start, interval_end, value) = interval
                     
-                    # # Fill empty values when interval skips some positions
-                    # if cur_position < interval_start:
-                    #     raw_data[chrom][file_index][
-                    #         cur_position : interval_start
-                    #     ] = [EMPTY_VALUE] * (interval_start - cur_position)
-
-                    # Fill suggested values in the interval
                     raw_data[chrom][file_index][
                         interval_start : interval_end
-                    ] = [value] * (interval_end - interval_start)
-
-                    # cur_position = interval_end
-
-                # # Fill empty values when real positions are skipped
-                # if cur_position is not size:
-                #     raw_data[chrom][file_index][
-                #         cur_position : size
-                #     ] = [EMPTY_VALUE] * (size - cur_position)
-                
-                print(chrom, "in", cur_in_file, "processed.")
+                    ] = np.full((interval_end - interval_start), value)
 
             bw.close()
-            print("File", cur_in_file, "processed.")
+            print("File processed:", cur_in_file, utils.get_time_duration())
         
-        # Store raw data to a cache file
+        # Store raw data to a cache file.
+        # Use chunk for h5py to enhance performance.
+        # https://stackoverflow.com/a/27713489
+        chunck_size = 100000000
         for (chrom, size) in chromsizes:
-            # TODO: When using batch, change index range.
-            # f_out[chrom][0 : len(raw_data)] = np.array(raw_data)
-            f_out[chrom][0 : size] = raw_data[chrom].T
-        print("Cache file saved", f_out[chrom][0 : size].shape)
-        
+            cur_size = 0
+            while cur_size < size:
+                next_size = cur_size + chunck_size if cur_size + chunck_size < size else size
+                f_out[chrom][cur_size : next_size] = raw_data[chrom].T[cur_size : next_size]
+                cur_size = next_size
+
+        print("Cache file saved", f_out[chrom][0 : size].shape, utils.get_time_duration())
         f_out.close()
 
         tf = temp_file
@@ -151,23 +138,24 @@ def bigwig_to_multivec(
 
         # The path of an output file.
         output_file = op.splitext([input_files[0]][0])[0] + ".multires.mv5"
-        print("output_file:", output_file)
+        print("output_file:", output_file, utils.get_time_duration())
 
-        # Override the output file if it existts
+        # Override the output file if it existts.
         if op.exists(output_file):
             os.remove(output_file)
         
         cmv.create_multivec_multires(
             f_in,
             chromsizes=chromsizes,
-            agg=lambda x: np.nansum(x.T.reshape((x.shape[1], -1, 2)), axis=2).T, # Default aggregation lamda
+            agg=lambda x: np.nansum(x.T.reshape((x.shape[1], -1, 2)), axis=2).T, # Default aggregation lamda.
             starting_resolution=starting_resolution,
             tile_size=256,
             output_file=output_file
         )
 
 def main():
-    # Test
+    ## Test.
+    # Simplest conversion.
     if False:
         output_file = op.splitext(["sample_data/debug2.bw"][0])[0] + ".multires.mv5"
         
@@ -178,7 +166,7 @@ def main():
         cmv.create_multivec_multires(
             f,
             chromsizes=[('chr1', 10000)],
-            agg=lambda x: np.nansum(x.T.reshape((x.shape[1], -1, 2)), axis=2).T, # Default aggregation lamda
+            agg=lambda x: np.nansum(x.T.reshape((x.shape[1], -1, 2)), axis=2).T, # Default aggregation lamda.
             starting_resolution=1,
             tile_size=256,
             output_file=output_file

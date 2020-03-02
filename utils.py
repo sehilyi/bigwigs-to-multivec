@@ -1,3 +1,5 @@
+import time
+
 CHROMOSOME_ORDER = [
     "chr1", "chr2", "chr3", "chr4", "chr5",
     "chr6", "chr7", "chr8", "chr9", "chr10",
@@ -15,3 +17,10 @@ def sort_by_chrom(x):
     x: tuple (chromosome, size)
     """
     return CHROMOSOME_ORDER.index(x[0]) if x[0] in CHROMOSOME_ORDER else 999
+
+start_time = time.time()
+def set_time():
+    start_time = time.time()
+
+def get_time_duration():
+    return "(" + str(int(time.time() - start_time)) + " sec.)"

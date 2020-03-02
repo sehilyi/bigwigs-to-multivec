@@ -8,12 +8,12 @@
   "views": [
     {
       "initialXDomain": [
-        -27086546399.746223,
-        22765126591.27608
+        -201070172.56118622,
+        3353241060.157328
       ],
       "initialYDomain": [
-        6915857106.673397,
-        17910811070.70125
+        10392437516.114767,
+        16033961302.514788
       ],
       "tracks": {
         "top": [
@@ -52,16 +52,16 @@
           {
             "type": "horizontal-multivec",
             "uid": "cistrome-track-1",
-            "tilesetUid": "SNt3htuLQnO9LErMqHOl6Q",
+            "tilesetUid": "FFfLIP2IQyCk36NAMLzU2w",
             "server": "http://localhost:8001/api/v1",
             "options": {
               "labelPosition": "hidden",
               "labelColor": "black",
               "labelTextOpacity": 0.4,
-              "valueScaling": "log",
+              "valueScaling": "linear",
               "trackBorderWidth": 0,
               "trackBorderColor": "black",
-              "heatmapValueScaling": "log",
+              "heatmapValueScaling": "linear",
               "name": "6_treat.multires.mv5",
               "labelLeftMargin": 0,
               "labelRightMargin": 0,
@@ -79,21 +79,31 @@
             "width": 2530,
             "height": 458,
             "resolutions": [
-              16384000,
-              8192000,
-              4096000,
-              2048000,
-              1024000,
-              512000,
-              256000,
-              128000,
-              64000,
-              32000,
-              16000,
-              8000,
-              4000,
-              2000,
-              1000
+              16777216,
+              8388608,
+              4194304,
+              2097152,
+              1048576,
+              524288,
+              262144,
+              131072,
+              65536,
+              32768,
+              16384,
+              8192,
+              4096,
+              2048,
+              1024,
+              512,
+              256,
+              128,
+              64,
+              32,
+              16,
+              8,
+              4,
+              2,
+              1
             ]
           }
         ],
