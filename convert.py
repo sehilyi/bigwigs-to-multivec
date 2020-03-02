@@ -11,10 +11,15 @@ import numpy as np
 import multivec as cmv
 import utils
 
-IS_DEBUG = True
+IS_DEBUG = False
 test_input_files_1 = ["sample_data/2_treat.bw"]
 test_input_files_2 = ["sample_data/1_treat.bw", "sample_data/2_treat.bw"]
-test_input_files_3 = ["sample_data/6_treat.bw", "sample_data/2_treat.bw", "sample_data/1_treat.bw"]
+test_input_files_3 = [
+    "sample_data/6_treat.bw", 
+    "sample_data/2_treat.bw", 
+    "sample_data/1_treat.bw"
+]
+test_input_files_58 = ["sample_output/" + str(i + 1) + "_cistrome_db.bw" for i in range(2)]
 
 def bigwig_to_multivec(
     input_files,
@@ -37,6 +42,7 @@ def bigwig_to_multivec(
     if len(input_files) is 0:
         print("No enough input files suggested.")
         return
+    print(len(input_files), "files prepared.")
 
     # None bigwig files.
     for in_file in input_files:
@@ -76,6 +82,7 @@ def bigwig_to_multivec(
         
         # Convert dict to a list of tuples to input to multivec function.
         chromsizes = sorted([(k, v) for k, v in chromsizes.items()], key=utils.sort_by_chrom)
+        
         # TODO: Remove this line when tested with a single chromosome.
         if IS_DEBUG:
             # chromsizes = [("chr1", 248956422)]
@@ -101,34 +108,34 @@ def bigwig_to_multivec(
 
             for (chrom, size) in chromsizes:
                 
-                cur_position = 0
+                # cur_position = 0
                 
                 for interval in bw.intervals(chrom):
                     (interval_start, interval_end, value) = interval
                     
-                    # Fill empty values when interval skips some positions
-                    if cur_position < interval_start:
-                        raw_data[chrom][file_index][
-                            cur_position : interval_start
-                        ] = [EMPTY_VALUE] * (interval_start - cur_position)
+                    # # Fill empty values when interval skips some positions
+                    # if cur_position < interval_start:
+                    #     raw_data[chrom][file_index][
+                    #         cur_position : interval_start
+                    #     ] = [EMPTY_VALUE] * (interval_start - cur_position)
 
                     # Fill suggested values in the interval
                     raw_data[chrom][file_index][
                         interval_start : interval_end
                     ] = [value] * (interval_end - interval_start)
 
-                    cur_position = interval_end
+                    # cur_position = interval_end
 
-                # Fill empty values when real positions are skipped
-                if cur_position is not size:
-                    raw_data[chrom][file_index][
-                        cur_position : size
-                    ] = [EMPTY_VALUE] * (size - cur_position)
+                # # Fill empty values when real positions are skipped
+                # if cur_position is not size:
+                #     raw_data[chrom][file_index][
+                #         cur_position : size
+                #     ] = [EMPTY_VALUE] * (size - cur_position)
                 
                 print(chrom, "in", cur_in_file, "processed.")
 
             bw.close()
-            print("File", cur_in_file, file_index, "processed.")
+            print("File", cur_in_file, "processed.")
         
         # Store raw data to a cache file
         for (chrom, size) in chromsizes:
@@ -137,7 +144,6 @@ def bigwig_to_multivec(
             f_out[chrom][0 : size] = raw_data[chrom].T
         print("Cache file saved", f_out[chrom][0 : size].shape)
         
-        f_out.attrs.create("row_infos", input_files)
         f_out.close()
 
         tf = temp_file
@@ -152,7 +158,7 @@ def bigwig_to_multivec(
             os.remove(output_file)
         
         cmv.create_multivec_multires(
-            f_out,
+            f_in,
             chromsizes=chromsizes,
             agg=lambda x: np.nansum(x.T.reshape((x.shape[1], -1, 2)), axis=2).T, # Default aggregation lamda
             starting_resolution=starting_resolution,
@@ -161,7 +167,6 @@ def bigwig_to_multivec(
         )
 
 def main():
-    
     # Test
     if False:
         output_file = op.splitext(["sample_data/debug2.bw"][0])[0] + ".multires.mv5"
@@ -182,7 +187,7 @@ def main():
         return
     ######
     
-    bigwig_to_multivec(test_input_files_2)
+    bigwig_to_multivec(test_input_files_58)
 
 if __name__ == "__main__":
 	main()
