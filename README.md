@@ -13,7 +13,8 @@ python manage.py ingest_tileset --filename my.multivec.file --filetype multivec 
 
 Use the following track definition in HiGlass:
 ```
-"type": "horizontal-multivec",
+{
+    "type": "horizontal-multivec",
     "uid": "cistrome-track-1",
     "tilesetUid": "your-tile-set-uid",
     "server": "http://localhost:8001/api/v1",
@@ -58,5 +59,5 @@ Use the following track definition in HiGlass:
         2000,
         1000
     ]
-    }
+}
 ```
