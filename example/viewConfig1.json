@@ -1,112 +1,128 @@
 {
-    "editable": true,
-    "zoomFixed": false,
-    "trackSourceServers": [
-      "http://localhost:8001/api/v1"
-    ],
-    "exportViewUrl": "/api/v1/viewconfs",
-    "views": [
-      {
-        "initialXDomain": [
-          -27086546399.746223,
-          22765126591.27608
+  "editable": true,
+  "zoomFixed": false,
+  "trackSourceServers": [
+    "http://localhost:8001/api/v1"
+  ],
+  "exportViewUrl": "/api/v1/viewconfs",
+  "views": [
+    {
+      "initialXDomain": [
+        -27086546399.746223,
+        22765126591.27608
+      ],
+      "initialYDomain": [
+        6915857106.673397,
+        17910811070.70125
+      ],
+      "tracks": {
+        "top": [
+          {
+            "type": "horizontal-chromosome-labels",
+            "uid": "GzHGPlijS2eASBqslzVcxA",
+            "tilesetUid": "ZpZ8c5JJRUS1J7ZkofcUrg",
+            "server": "https://resgen.io/api/v1",
+            "options": {
+              "showMousePosition": false,
+              "mousePositionColor": "#999999",
+              "color": "#808080",
+              "stroke": "#ffffff",
+              "fontSize": 12,
+              "fontIsLeftAligned": false
+            },
+            "width": 1027,
+            "height": 30
+          },
+          {
+            "type": "top-axis",
+            "local": true,
+            "orientation": "1d-horizontal",
+            "thumbnail": {},
+            "defaultOptions": {},
+            "server": "",
+            "tilesetUid": "Rb29dm5AQ7ylUiBjJkJwUQ",
+            "uid": "Tde3EioURniMPPbxMLZ_DQ",
+            "options": {},
+            "width": 2530,
+            "height": 20
+          }
         ],
-        "initialYDomain": [
-          6915857106.673397,
-          17910811070.70125
+        "left": [],
+        "center": [
+          {
+            "type": "horizontal-multivec",
+            "uid": "cistrome-track-1",
+            "tilesetUid": "SNt3htuLQnO9LErMqHOl6Q",
+            "server": "http://localhost:8001/api/v1",
+            "options": {
+              "labelPosition": "hidden",
+              "labelColor": "black",
+              "labelTextOpacity": 0.4,
+              "valueScaling": "log",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "heatmapValueScaling": "log",
+              "name": "6_treat.multires.mv5",
+              "labelLeftMargin": 0,
+              "labelRightMargin": 0,
+              "labelTopMargin": 0,
+              "labelBottomMargin": 0,
+              "labelShowResolution": true,
+              "minHeight": 100,
+              "colorbarPosition": "bottomLeft",
+              "labelShowAssembly": true,
+              "colorbarBackgroundColor": "#ffffff",
+              "scaleStartPercent": "0.00000",
+              "scaleEndPercent": "1.00000",
+              "selectedRow": null
+            },
+            "width": 2530,
+            "height": 458,
+            "resolutions": [
+              16384000,
+              8192000,
+              4096000,
+              2048000,
+              1024000,
+              512000,
+              256000,
+              128000,
+              64000,
+              32000,
+              16000,
+              8000,
+              4000,
+              2000,
+              1000
+            ]
+          }
         ],
-        "tracks": {
-          "top": [
-            {
-              "type": "top-axis",
-              "local": true,
-              "orientation": "1d-horizontal",
-              "thumbnail": {},
-              "defaultOptions": {},
-              "server": "",
-              "tilesetUid": "Rb29dm5AQ7ylUiBjJkJwUQ",
-              "uid": "Tde3EioURniMPPbxMLZ_DQ",
-              "options": {},
-              "width": 2530,
-              "height": 20
-            }
-          ],
-          "left": [],
-          "center": [
-            {
-              "type": "horizontal-multivec",
-              "uid": "cistrome-track-1",
-              "tilesetUid": "KIOWfO1CSOyhKQpTFc-25g",
-              "server": "http://localhost:8001/api/v1",
-              "options": {
-                "labelPosition": "hidden",
-                "labelColor": "black",
-                "labelTextOpacity": 0.4,
-                "valueScaling": "log",
-                "trackBorderWidth": 0,
-                "trackBorderColor": "black",
-                "heatmapValueScaling": "log",
-                "name": "6_treat.multires.mv5",
-                "labelLeftMargin": 0,
-                "labelRightMargin": 0,
-                "labelTopMargin": 0,
-                "labelBottomMargin": 0,
-                "labelShowResolution": true,
-                "minHeight": 100,
-                "colorbarPosition": "bottomLeft",
-                "labelShowAssembly": true,
-                "colorbarBackgroundColor": "#ffffff",
-                "scaleStartPercent": "0.00000",
-                "scaleEndPercent": "1.00000",
-                "selectedRow": null
-              },
-              "width": 2530,
-              "height": 458,
-              "resolutions": [
-                16384000,
-                8192000,
-                4096000,
-                2048000,
-                1024000,
-                512000,
-                256000,
-                128000,
-                64000,
-                32000,
-                16000,
-                8000,
-                4000,
-                2000,
-                1000
-              ]
-            }
-          ],
-          "bottom": [],
-          "right": [],
-          "whole": [],
-          "gallery": []
-        },
-        "layout": {
-          "w": 12,
-          "h": 90,
-          "x": 0,
-          "y": 0,
-          "moved": false,
-          "static": false
-        },
-        "uid": "cistrome-view-1"
-      }
-    ],
-    "zoomLocks": {
-      "locksByViewUid": {},
-      "locksDict": {}
-    },
-    "locationLocks": {
-      "locksByViewUid": {},
-      "locksDict": {}
-    },
-    "valueScaleLocks": {
-      "locksByViewUid": {},
-      "locksDict": {}
+        "bottom": [],
+        "right": [],
+        "whole": [],
+        "gallery": []
+      },
+      "layout": {
+        "w": 12,
+        "h": 90,
+        "x": 0,
+        "y": 0,
+        "moved": false,
+        "static": false
+      },
+      "uid": "cistrome-view-1"
     }
+  ],
+  "zoomLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "locationLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "valueScaleLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
   }
+}
