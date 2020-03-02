@@ -137,11 +137,11 @@ def bigwig_to_multivec(
             f_out[chrom][0 : size] = raw_data[chrom].T
         print("Cache file saved", f_out[chrom][0 : size].shape)
         
-        # f_out.attrs.create("row_infos", input_files)
-        # f_out.close()
+        f_out.attrs.create("row_infos", input_files)
+        f_out.close()
 
-        # tf = temp_file
-        # f_in = h5py.File(tf, "r")
+        tf = temp_file
+        f_in = h5py.File(tf, "r")
 
         # The path of an output file.
         output_file = op.splitext([input_files[0]][0])[0] + ".multires.mv5"
@@ -159,7 +159,6 @@ def bigwig_to_multivec(
             tile_size=256,
             output_file=output_file
         )
-        f_out.close()
 
 def main():
     
