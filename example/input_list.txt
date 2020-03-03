@@ -1,0 +1,5 @@
+sample_output/1_cistrome_db.bw
+sample_output/2_cistrome_db.bw
+sample_output/3_cistrome_db.bw
+sample_output/4_cistrome_db.bw
+sample_output/5_cistrome_db.bw

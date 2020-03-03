@@ -1,18 +1,20 @@
 # bigwigs-to-multivec
 Convert multiple BigWig files to a single multivec file to be used in [HiGlass](http://higlass.io/)'s [horizontal multivec tracks](https://docs.higlass.io/track_types.html#horizontal-multivec).
 
-Convert bigwigs to multivec:
+## How to Use
+Aggregate multiple bigwig files to a multivec file:
 ```
-python convert.py
+python convert.py input_files.txt [output_file.multires.mv5]
 ```
+where `input_files.txt` contains the paths of BigWig files, each line corresponding to each input file (Refer to the `example` folder).
 
-Upload multivec outputs into HiGlass server:
+Upload the multivec output into the [HiGlass server](https://github.com/higlass/higlass-server):
 ```
 python manage.py ingest_tileset --filename my.multivec.file --filetype multivec --datatype multivec --project-name "Experiment 1" --coordSystem hg19
 ```
 
 Use the following track definition in HiGlass:
-```
+```json
 {
     "type": "horizontal-multivec",
     "uid": "cistrome-track-1",

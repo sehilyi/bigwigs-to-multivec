@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import os
 import os.path as op
 import pyBigWig
@@ -11,7 +12,7 @@ import numpy as np
 import multivec as cmv
 import utils
 
-IS_DEBUG = False
+IS_DEBUG = True
 
 test_input_files_1 = ["sample_data/2_treat.bw"]
 test_input_files_2 = ["sample_data/1_treat.bw", "sample_data/2_treat.bw"]
@@ -22,8 +23,9 @@ test_input_files_3 = [
 ]
 test_input_files_58 = ["sample_output/" + str(i + 1) + "_cistrome_db.bw" for i in range(5)]
 
-def bigwig_to_multivec(
+def bigwigs_to_multivec(
     input_files,
+    output_file=None,
     starting_resolution=1   # TODO: Enable accepting non-one resolution
 ):
     """
@@ -137,7 +139,8 @@ def bigwig_to_multivec(
         f_in = h5py.File(tf, "r")
 
         # The path of an output file.
-        output_file = op.splitext([input_files[0]][0])[0] + ".multires.mv5"
+        if output_file is None:
+            output_file = op.splitext([input_files[0]][0])[0] + ".multires.mv5"
         print("output_file:", output_file, utils.get_time_duration())
 
         # Override the output file if it existts.
@@ -152,10 +155,11 @@ def bigwig_to_multivec(
             tile_size=256,
             output_file=output_file
         )
+        print("Done Converting.", utils.get_time_duration())
 
-def main():
+def convert():
     ## Test.
-    # Simplest conversion.
+    # Simplest version of conversion.
     if False:
         output_file = op.splitext(["sample_data/debug2.bw"][0])[0] + ".multires.mv5"
         
@@ -175,7 +179,30 @@ def main():
         return
     ######
     
-    bigwig_to_multivec(test_input_files_58)
+    # Check arguments.
+    if len(sys.argv) <= 1:
+        print("The path of an input file is not suggested.")
+        return
+    
+    # Set output file path.
+    output_file = sys.argv[2] if len(sys.argv) >= 3 else None
+
+    # Get input files.
+    try:
+        input_path = open(sys.argv[1], "r")
+    except IOError:
+        print("There is no such file:", sys.argv[1])
+        return
+
+    input_files = []
+    with input_path:
+        for line in input_path.readlines():
+            input_files += [line[:-1]]  # Remove newlines.
+
+    bigwigs_to_multivec(
+        input_files=input_files, 
+        output_file=output_file
+    )
 
 if __name__ == "__main__":
-	main()
+	convert()
