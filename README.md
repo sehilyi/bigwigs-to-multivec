@@ -4,9 +4,11 @@ Convert multiple BigWig files to a single multivec file to be used in [HiGlass](
 ## How to Use
 Aggregate multiple bigwig files to a multivec file:
 ```
-python convert.py input_files.txt [output_file.multires.mv5]
+
+python convert.py input_files.txt [1000 [output_file.multires.mv5]]
 ```
-where `input_files.txt` contains the paths of BigWig files, each line corresponding to each input file (Refer to the `example` folder).
+where `input_files.txt` contains the paths of BigWig files, each line corresponding to each input file (Refer to the `example` folder) and 
+`1000` correspond to the starting resolution (`default=1`).
 
 Upload the multivec output into the [HiGlass server](https://github.com/higlass/higlass-server):
 ```

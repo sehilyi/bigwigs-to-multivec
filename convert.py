@@ -26,7 +26,7 @@ test_input_files_58 = ["sample_output/" + str(i + 1) + "_cistrome_db.bw" for i i
 def bigwigs_to_multivec(
     input_files,
     output_file=None,
-    starting_resolution=1   # TODO: Enable accepting non-one resolution
+    starting_resolution=1
 ):
     """
     Convert a bigwig file to a multivec file.
@@ -34,6 +34,7 @@ def bigwigs_to_multivec(
     Parameters
     ----------
     input_files: array of file paths
+    output_file: output file path
     starting_resolution: int (default 1)
         The starting resolution of the input data
     """
@@ -91,8 +92,16 @@ def bigwigs_to_multivec(
             # chromsizes = [("chr1", 248956422)]
             chromsizes=[("chr9", 138394717)]
             
-        # Init a variable & create cache files with name and size
-        raw_data = { chrom: np.zeros((len(input_files),size)) for (chrom, size) in chromsizes }
+        # Init a variable.
+        raw_data = { 
+            chrom: np.zeros(
+                (
+                    len(input_files), 
+                    math.ceil(size / starting_resolution)
+                )
+            ) for (chrom, size) in chromsizes
+        }
+        # Create caches using name and size
         for (chrom, size) in chromsizes:
             f_out.create_dataset(
                 chrom,
@@ -114,9 +123,11 @@ def bigwigs_to_multivec(
                 for interval in bw.intervals(chrom):
                     (interval_start, interval_end, value) = interval
                     
+                    fixed_interval_start = interval_start // starting_resolution
+                    fixed_interval_end = math.ceil(interval_end / starting_resolution)
                     raw_data[chrom][file_index][
-                        interval_start : interval_end
-                    ] = np.full((interval_end - interval_start), value)
+                        fixed_interval_start : fixed_interval_end
+                    ] = np.full((fixed_interval_end - fixed_interval_start), value)
 
             bw.close()
             print("File processed:", cur_in_file, utils.get_time_duration())
@@ -124,15 +135,19 @@ def bigwigs_to_multivec(
         # Store raw data to a cache file.
         # Use chunk for h5py to enhance performance.
         # https://stackoverflow.com/a/27713489
+        is_chunck = False   # TODO: chunck not working with non-one resolution.
         chunck_size = 100000000
         for (chrom, size) in chromsizes:
-            cur_size = 0
-            while cur_size < size:
-                next_size = cur_size + chunck_size if cur_size + chunck_size < size else size
-                f_out[chrom][cur_size : next_size] = raw_data[chrom].T[cur_size : next_size]
-                cur_size = next_size
+            if is_chunck:
+                cur_size = 0
+                while cur_size < size:
+                    next_size = cur_size + chunck_size if cur_size + chunck_size < size else size
+                    f_out[chrom][cur_size : next_size] = raw_data[chrom].T[cur_size : next_size]
+                    cur_size = next_size
+            else:
+                f_out[chrom][0 : math.ceil(size / starting_resolution)] = raw_data[chrom].T
 
-        print("Cache file saved", f_out[chrom][0 : size].shape, utils.get_time_duration())
+        print("Cache file saved", f_out[chrom].shape, utils.get_time_duration())
         f_out.close()
 
         tf = temp_file
@@ -183,9 +198,6 @@ def convert():
     if len(sys.argv) <= 1:
         print("The path of an input file is not suggested.")
         return
-    
-    # Set output file path.
-    output_file = sys.argv[2] if len(sys.argv) >= 3 else None
 
     # Get input files.
     try:
@@ -198,10 +210,17 @@ def convert():
     with input_path:
         for line in input_path.readlines():
             input_files += [line[:-1]]  # Remove newlines.
+    
+    # Get starting resolution.
+    resolution = int(sys.argv[2]) if len(sys.argv) >= 3 else None
+
+    # Get output file path.
+    output_file = sys.argv[3] if len(sys.argv) >= 4 else None
 
     bigwigs_to_multivec(
         input_files=input_files, 
-        output_file=output_file
+        output_file=output_file,
+        starting_resolution=resolution
     )
 
 if __name__ == "__main__":
