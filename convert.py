@@ -117,14 +117,15 @@ def bigwigs_to_multivec(
 
         for file_index, cur_in_file in enumerate(input_files):
             bw = pyBigWig.open(cur_in_file)
-
-            for (chrom, size) in chromsizes:
+            
+            for (chrom, size) in bw.chroms().items():
                 
                 for interval in bw.intervals(chrom):
                     (interval_start, interval_end, value) = interval
                     
                     fixed_interval_start = interval_start // starting_resolution
                     fixed_interval_end = math.ceil(interval_end / starting_resolution)
+                    
                     raw_data[chrom][file_index][
                         fixed_interval_start : fixed_interval_end
                     ] = np.full((fixed_interval_end - fixed_interval_start), value)
