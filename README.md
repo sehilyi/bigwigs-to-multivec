@@ -10,7 +10,8 @@ where `input_files.txt` contains the paths of BigWig files, each line correspond
 
 Upload the multivec output into the [HiGlass server](https://github.com/higlass/higlass-server):
 ```
-python manage.py ingest_tileset --filename my.multivec.file --filetype multivec --datatype multivec --project-name "Experiment 1" --coordSystem hg19
+python manage.py ingest_tileset --filename my.multivec.file --filetype multivec /
+       --datatype multivec --project-name "Experiment 1" --coordSystem hg19
 ```
 
 Use the following track definition in HiGlass:
