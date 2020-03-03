@@ -12,7 +12,7 @@ import numpy as np
 import multivec as cmv
 import utils
 
-IS_DEBUG = True
+IS_DEBUG = False
 
 test_input_files_1 = ["sample_data/2_treat.bw"]
 test_input_files_2 = ["sample_data/1_treat.bw", "sample_data/2_treat.bw"]
