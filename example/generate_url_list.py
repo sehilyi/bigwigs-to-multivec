@@ -13,10 +13,11 @@ def request():
     factors = "H3K27ac" # or "all"
     keyword = "h3k27ac" # or ""
     default_url = "http://dc2.cistrome.org/api/main_filter_ng?allqc={}&cellinfos=all&completed=false&curated=false&factors={}&keyword={}&page={}&peakqc=false&run=false&species=Homo+sapiens"
-    limit_num = 300
+    limit_num = 99999
     
     num_pages = -1
     url_list = []
+    id_list = []
 
     # Get metadata (e.g., number of pages)
     with urllib.request.urlopen(default_url.format(allqc, factors, keyword, 1)) as url:
@@ -37,6 +38,7 @@ def request():
                     new_url = "http://dbtoolkit.cistrome.org/api_bigwig?sid={}".format(cid)
                     if new_url not in url_list:
                         url_list += [new_url]
+                        id_list += [cid]
                         if len(url_list) >= limit_num:
                             done_processing = True
                     if done_processing:
@@ -49,13 +51,19 @@ def request():
 
         if done_processing:
             break
-                
-    with open('./sample_input/input_list.txt', 'w') as f_out:
+    
+    # Write input urls.
+    with open('./sample_input/input_urls.txt', 'w') as f_out:
         # Write parameters.
         f_out.writelines("allqc={}\tfactors={}\tkeyword={}\tlimit_num={}\n".format(allqc, factors, keyword, limit_num))
 
         for u in url_list:
             f_out.writelines(u + "\n")
+    
+    # Write input urls.
+    with open('./sample_input/input_list.txt', 'w') as f_out:
+        for cid in id_list:
+            f_out.writelines("api_bigwig?sid={}\n".format(cid))
 
 if __name__ == "__main__":
 	request()
