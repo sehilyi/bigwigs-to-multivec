@@ -1,7 +1,7 @@
 import urllib.request, json
 
 # Download:
-# wget -i input_list.txt
+# wget -i input_urls.txt
 
 def request():
     
@@ -50,6 +50,7 @@ def request():
             print("Done processing page", p)
 
         if done_processing:
+            print("Done processing.")
             break
     
     # Write input urls.
